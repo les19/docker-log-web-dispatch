@@ -9,15 +9,17 @@ import (
 )
 
 type Config struct {
-	LoggerServiceURL     string
-	HTTPClientTimeout    time.Duration
-	LogTailCount         string
-	ListenAll            bool
-	ContainerNameFilters []string
+	LoggerServiceURL      string
+	LoggerAuthHeaderName  string
+	LoggerAuthHeaderValue string
+	HTTPClientTimeout     time.Duration
+	LogTailCount          string
+	ListenAll             bool
+	ContainerNameFilters  []string
 }
 
 const (
-	defaultLoggerServiceURL      = "https://83697c91011a.ngrok.app/logs"
+	defaultLoggerServiceURL      = "http://127.0.0.1"
 	defaultHTTPClientTimeoutSecs = 10 // seconds
 	defaultLogTailCount          = "10"
 	defaultContainerNameFilters  = "app,application"
@@ -25,11 +27,13 @@ const (
 
 func LoadConfig() *Config {
 	cfg := &Config{
-		LoggerServiceURL:     getEnv("LOGGER_SERVICE_URL", defaultLoggerServiceURL),
-		HTTPClientTimeout:    time.Duration(getEnvInt("HTTP_CLIENT_TIMEOUT_SECONDS", defaultHTTPClientTimeoutSecs)) * time.Second,
-		LogTailCount:         getEnv("LOG_TAIL_COUNT", defaultLogTailCount),
-		ListenAll:            getEnvBool("LISTEN_ALL_CONTAINERS", false),
-		ContainerNameFilters: getEnvSlice("CONTAINER_NAME_FILTERS", defaultContainerNameFilters),
+		LoggerServiceURL:      getEnv("LOGGER_SERVICE_URL", defaultLoggerServiceURL),
+		LoggerAuthHeaderName:  getEnv("LOGGER_AUTH_HEADER_NAME", "Authorization"),
+		LoggerAuthHeaderValue: getEnv("LOGGER_AUTH_HEADER_VALUE", ""),
+		HTTPClientTimeout:     time.Duration(getEnvInt("HTTP_CLIENT_TIMEOUT_SECONDS", defaultHTTPClientTimeoutSecs)) * time.Second,
+		LogTailCount:          getEnv("LOG_TAIL_COUNT", defaultLogTailCount),
+		ListenAll:             getEnvBool("LISTEN_ALL_CONTAINERS", false),
+		ContainerNameFilters:  getEnvSlice("CONTAINER_NAME_FILTERS", defaultContainerNameFilters),
 	}
 	return cfg
 }
