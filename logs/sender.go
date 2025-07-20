@@ -13,14 +13,18 @@ type LogSender interface {
 }
 
 type HTTPLogSender struct {
-	client *http.Client
-	url    string
+	client          *http.Client
+	authHeaderName  string
+	authHeaderValue string
+	url             string
 }
 
-func NewHTTPLogSender(url string, timeout time.Duration) *HTTPLogSender {
+func NewHTTPLogSender(url string, name string, value string, timeout time.Duration) *HTTPLogSender {
 	return &HTTPLogSender{
-		client: &http.Client{Timeout: timeout},
-		url:    url,
+		client:          &http.Client{Timeout: timeout},
+		url:             url,
+		authHeaderName:  name,
+		authHeaderValue: value,
 	}
 }
 
@@ -30,6 +34,7 @@ func (s *HTTPLogSender) SendLog(logLine []byte) error {
 		return fmt.Errorf("failed to create HTTP request for log: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set(s.authHeaderName, s.authHeaderValue)
 
 	resp, err := s.client.Do(req)
 	if err != nil {

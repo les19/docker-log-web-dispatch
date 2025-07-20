@@ -38,7 +38,7 @@ func main() {
 	}
 	defer cli.Close()
 
-	logSender := logs.NewHTTPLogSender(cfg.LoggerServiceURL, cfg.HTTPClientTimeout)
+	logSender := logs.NewHTTPLogSender(cfg.LoggerServiceURL, cfg.LoggerAuthHeaderName, cfg.LoggerAuthHeaderValue, cfg.HTTPClientTimeout)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
