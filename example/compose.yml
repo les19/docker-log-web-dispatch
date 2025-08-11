@@ -1,0 +1,27 @@
+services:
+    application:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        networks:
+            - main
+
+    logger:
+        image: 'ghcr.io/les19/docker-log-web-dispatch:main'
+        volumes:
+            - '/var/run/docker.sock:/var/run/docker.sock'
+        networks:
+            - main
+        deploy:
+            mode: global
+        depends_on:
+            - application
+
+        environment:
+            LOGGER_SERVICE_URL: '${LOGGER_SERVICE_URL}'
+            LOGGER_AUTH_HEADER_NAME: 'X-Auth-Token'
+            LOGGER_AUTH_HEADER_VALUE: '${LOGGER_AUTH_HEADER_VALUE:-some-random-token}'
+            CONTAINER_NAME_FILTERS: 'example-application'
+networks:
+    main:
+        driver: bridge
